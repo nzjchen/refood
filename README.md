@@ -1,3 +1,7 @@
+# SENG302 Group Project
+
+Developed in a group of eight, across two semester for the University of Canterbury's SENG302 course.
+
 # ReFood
 
 Welcome to our waste food web app!
