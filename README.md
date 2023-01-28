@@ -1,6 +1,6 @@
 # SENG302 Group Project
 
-Developed in a group of eight, across two semester for the University of Canterbury's SENG302 course.
+Developed in a group of eight, across two semesters in 2021 for the University of Canterbury's SENG302 course.
 
 # ReFood
 
