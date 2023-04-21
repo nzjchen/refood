@@ -7,7 +7,7 @@ Developed in a group of eight, across two semesters in 2021 for the University o
 Welcome to our waste food web app!
 The idea for this site is to allow businesses to advertise products that are going to be wasted, to help reduce the amount of wasted food and hopefully reduce it's impact on the environment.
 
-For detailed information about our site and how to use it please refer to our [wiki](https://eng-git.canterbury.ac.nz/seng302-2021/team-900/-/wikis/home), which contains a user manual and our design decisions
+For detailed information about our site and how to use it please refer to our [wiki](https://github.com/nzjchen/refood/wiki), which contains a user manual and our design decisions
 
 You can find our deployed site here: [https://csse-s302g9.canterbury.ac.nz/prod](https://csse-s302g9.canterbury.ac.nz/prod/)
 
