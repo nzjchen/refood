@@ -55,7 +55,7 @@ Running on: http://localhost:9499/ by default
 
 - SENG302 teaching team
 - Ayub Momahamed
-- Dan Bublik
+- Danila Bublik
 - Jackie Chen
 - Kye Oldham
 - Lachlan Reynolds
