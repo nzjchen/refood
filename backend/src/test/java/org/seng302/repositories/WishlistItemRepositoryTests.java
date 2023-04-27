@@ -107,6 +107,6 @@ class WishlistItemRepositoryTests {
         Business fakeBusiness = new Business("fakeBusiness", "fake description", addr, BusinessType.ACCOMMODATION_AND_FOOD_SERVICES);
         businessRepository.save(fakeBusiness);
         List<WishlistItem> notFound = wishlistItemRepository.findWishlistItemByBusiness(fakeBusiness);
-        assertThat(notFound.size()).isEqualTo(0);
+        assertThat(notFound.size()).isZero();
     }
 }

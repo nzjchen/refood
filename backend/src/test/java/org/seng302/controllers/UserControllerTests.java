@@ -68,7 +68,6 @@ class UserControllerTests {
     void setup() throws NoSuchAlgorithmException, IOException {
         Address addr = new Address(null, null, null, null, null, "Australia", "12345");
         image1 = new Image("new image", "0", "../../../resources/media.images/testlettuce.jpeg", "");
-
         user = new User("John", "Smith", addr, "johnsmith99@gmail.com", "1337-H%nt3r2", Role.USER);
         user.addUserImage(image1);
         user.setId(1L);
@@ -623,25 +622,7 @@ class UserControllerTests {
                 .andExpect(status().isForbidden());
     }
 
-    // User image tests
-    @Test
-    @WithMockUser(roles="USER")
-    void testBadImageIdSetUserImage() throws Exception {
-        // Wrong image id
-        Mockito.when(userRepository.findUserById(user.getId())).thenReturn(user);
-        mockMvc.perform(put("/users/{id}/images/100/makeprimary", user.getId())
-                .sessionAttr(User.USER_SESSION_ATTRIBUTE, user))
-                .andExpect(status().isNotAcceptable());
-    }
 
-    @Test
-    @WithMockUser(roles="USER")
-    void testBadUserIdSetUserImage() throws Exception {
-        //wrong user id
-        Mockito.when(userRepository.findUserById(user.getId())).thenReturn(user);
-        mockMvc.perform(put("/users/50/images/{imageId}/makeprimary", image1.getId())
-                .sessionAttr(User.USER_SESSION_ATTRIBUTE, user));
-    }
 
     @Test
     void testModifyUser_NotLoggedIn() throws Exception {
@@ -670,6 +651,26 @@ class UserControllerTests {
                 .sessionAttr(User.USER_SESSION_ATTRIBUTE, user1)
                 .content(mapper.writeValueAsString(minUserRequest)))
                 .andExpect(status().isNotAcceptable());
+    }
+
+    // User image tests
+    @Test
+    @WithMockUser(roles="USER")
+    void testBadImageIdSetUserImage() throws Exception {
+        // Wrong image id
+        Mockito.when(userRepository.findUserById(user.getId())).thenReturn(user);
+        mockMvc.perform(put("/users/{id}/images/100/makeprimary", user.getId())
+                .sessionAttr(User.USER_SESSION_ATTRIBUTE, user))
+                .andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    void testBadUserIdSetUserImage() throws Exception {
+        //wrong user id
+        Mockito.when(userRepository.findUserById(user.getId())).thenReturn(user);
+        mockMvc.perform(put("/users/50/images/{imageId}/makeprimary", image1.getId())
+                .sessionAttr(User.USER_SESSION_ATTRIBUTE, user));
     }
 
     @Test
@@ -722,6 +723,38 @@ class UserControllerTests {
         Assertions.assertEquals(userRepository.findUserById(user.getId()).getPrimaryImagePath(), user.getPrimaryImagePath());
 
     }
+
+
+    //DELETE User Image tests
+    @Test
+    @WithMockUser
+    void removeUserImageBadImageId() throws Exception {
+        Mockito.when(userRepository.findUserById(user.getId())).thenReturn(user);
+        mockMvc.perform(delete("/users/{id}/images/100", user.getId())
+                .sessionAttr(User.USER_SESSION_ATTRIBUTE, user))
+                .andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    @WithMockUser
+    void removeUserImageBadUserId() throws Exception {
+        Mockito.when(userRepository.findUserById(user.getId())).thenReturn(null);
+        mockMvc.perform(delete("/users/{id}/images/{imageId}", user.getId(), image1.getId())
+                .sessionAttr(User.USER_SESSION_ATTRIBUTE, user))
+                .andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    @WithMockUser
+    void removeUserImageWrongUser() throws Exception {
+        Mockito.when(userRepository.findUserById(user.getId())).thenReturn(user);
+        Address addr = new Address(null, null, null, null, null, "Australia", "12345");
+        User forbidden = new User("test", "user", addr, "test@gmail.com", "password", Role.USER);
+        mockMvc.perform(delete("/users/{id}/images/{imageId}", user.getId(), image1.getId())
+                .sessionAttr(User.USER_SESSION_ATTRIBUTE, forbidden))
+                .andExpect(status().isForbidden());
+    }
+
 
     @WithMockUser(username="johnsmith99@gmail.com", password="1337-H%nt3r2", roles="USER")
     void testModifyUser_undefinedReqBody() throws Exception {
@@ -842,4 +875,7 @@ class UserControllerTests {
                 .andExpect(status().isOk());
         Assertions.assertEquals(user1.getPhoneNumber(), minUserRequest.getPhoneNumber());
     }
+
+
+
 }

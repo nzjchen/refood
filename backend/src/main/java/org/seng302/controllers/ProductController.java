@@ -226,7 +226,6 @@ public class ProductController {
         }
 
         String imageExtension;
-
         if (image.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No image supplied.");
         }
@@ -248,7 +247,7 @@ public class ProductController {
         int count = 0;
 
         while (!freeImage) {
-            id = String.valueOf(count);
+            id = "product_" + productId + "_" + String.valueOf(businessId) + "_" + String.valueOf(count);
             File checkFile1 = new File(String.format("%s/%s.jpg", businessDir, id));
             File checkFile2 = new File(String.format("%s/%s.png", businessDir, id));
             File checkFile3 = new File(String.format("%s/%s.gif", businessDir, id));
@@ -263,7 +262,6 @@ public class ProductController {
         File file = new File(String.format("%s/%s%s", businessDir, id, imageExtension));
         File thumbnailFile = new File(String.format("%s/%s_thumbnail%s", businessDir, id, imageExtension));
         logger.info(String.format("Working Directory = %s", System.getProperty("user.dir")));
-        logger.info(file.getAbsolutePath());
         fileService.uploadImage(file, image.getBytes());
         fileService.createAndUploadThumbnailImage(file, thumbnailFile, imageExtension);
         String imageName = image.getOriginalFilename();

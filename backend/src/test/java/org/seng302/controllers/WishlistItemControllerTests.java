@@ -117,7 +117,7 @@ class WishlistItemControllerTests {
                 .content(mapper.writeValueAsString(mutedStatusRequest))
                 .sessionAttr(User.USER_SESSION_ATTRIBUTE, user))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(wishlistItem.getMutedStatus(), MutedStatus.MUTED);
+        Assertions.assertEquals(MutedStatus.MUTED, wishlistItem.getMutedStatus());
     }
 
     @Test
@@ -130,7 +130,7 @@ class WishlistItemControllerTests {
                 .content(mapper.writeValueAsString(mutedStatusRequest))
                 .sessionAttr(User.USER_SESSION_ATTRIBUTE, user))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(wishlistItem.getMutedStatus(), MutedStatus.UNMUTED);
+        Assertions.assertEquals(MutedStatus.UNMUTED, wishlistItem.getMutedStatus());
     }
 
     @Test
@@ -143,7 +143,7 @@ class WishlistItemControllerTests {
                 .content(mapper.writeValueAsString(mutedStatusRequest))
                 .sessionAttr(User.USER_SESSION_ATTRIBUTE, dgaa))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(wishlistItem.getMutedStatus(), MutedStatus.MUTED);
+        Assertions.assertEquals(MutedStatus.MUTED, wishlistItem.getMutedStatus());
     }
 
     @Test
@@ -156,7 +156,7 @@ class WishlistItemControllerTests {
                 .content(mapper.writeValueAsString(mutedStatusRequest))
                 .sessionAttr(User.USER_SESSION_ATTRIBUTE, gaa))
                 .andExpect(status().isOk());
-        Assertions.assertEquals(wishlistItem.getMutedStatus(), MutedStatus.MUTED);
+        Assertions.assertEquals(MutedStatus.MUTED, wishlistItem.getMutedStatus()    );
     }
 
     @Test

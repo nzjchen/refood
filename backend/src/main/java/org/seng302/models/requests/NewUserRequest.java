@@ -1,6 +1,5 @@
 package org.seng302.models.requests;
 
-import lombok.Data;
 import org.seng302.models.Address;
 
 /**

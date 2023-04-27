@@ -46,6 +46,7 @@ public class ListingNotification {
      * @param boughtListing the listing being notified about.
      * @param status the listing status.
      */
+
     public ListingNotification(User user, BoughtListing boughtListing, NotificationStatus status) {
         this.user = user;
         this.boughtListing = boughtListing;

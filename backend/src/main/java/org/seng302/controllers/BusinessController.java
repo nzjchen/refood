@@ -223,9 +223,8 @@ public class BusinessController {
      * Creates a sort object to be used by pageRequest to sort search results.
      * @param sortString string determining the sort type
      * @return Sort sortBy Sort specification
-     * @throws ResponseStatusException
      */
-    private Sort getSortType(String sortString) throws ResponseStatusException {
+    private Sort getSortType(String sortString) {
         Sort sortBy = Sort.by(Sort.Order.asc("id").ignoreCase());
         switch (sortString) {
             case "id":
@@ -405,7 +404,7 @@ public class BusinessController {
         int count = 0;
 
         while (!freeImage) {
-            id = String.valueOf(count);
+            id = "business_" + String.valueOf(businessId) + "_" + String.valueOf(count);
             File checkFile1 = new File(String.format("%s/%s.jpg", businessDir, id));
             File checkFile2 = new File(String.format("%s/%s.png", businessDir, id));
             File checkFile3 = new File(String.format("%s/%s.gif", businessDir, id));

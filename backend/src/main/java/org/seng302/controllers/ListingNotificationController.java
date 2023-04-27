@@ -76,8 +76,6 @@ public class ListingNotificationController {
         List<User> receivers = userLikes.stream().map(ListingLike::getUser).collect(Collectors.toList());
 
         for (User receiver : receivers) {
-            System.out.println(receiver.getId());
-
             if (receiver.getId() != currentUser.getId()) {
                 ListingNotification listingNotification = new ListingNotification(receiver, boughtListing, status);
                 listingNotificationRepository.save(listingNotification);

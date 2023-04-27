@@ -6,9 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.seng302.exceptions.InvalidImageExtensionException;
 import org.seng302.finders.UserFinder;
-import org.seng302.models.Image;
-import org.seng302.models.Role;
-import org.seng302.models.User;
+import org.seng302.models.*;
 import org.seng302.models.requests.LoginRequest;
 import org.seng302.models.requests.ModifyUserRequest;
 import org.seng302.models.requests.NewUserRequest;
@@ -385,7 +383,7 @@ public class UserController {
         boolean freeImage = false;
         int count = 0;
         while (!freeImage) {
-            imageId = String.valueOf(count);
+            imageId = "user_" +  String.valueOf(id) + "_" + String.valueOf(count);
             File checkFile1 = new File(String.format("%s/%s.jpg", userDir, imageId));
             File checkFile2 = new File(String.format("%s/%s.png", userDir, imageId));
             File checkFile3 = new File(String.format("%s/%s.gif", userDir, imageId));
@@ -402,13 +400,29 @@ public class UserController {
         logger.info(file.getAbsolutePath());
         fileService.uploadImage(file, image.getBytes());
         fileService.createAndUploadThumbnailImage(file, thumbnailFile, imageExtension);
-        String imageName = image.getOriginalFilename();
+
         // Save into DB.
-        Image newImage = new Image(imageName, imageId, file.toString(), thumbnailFile.toString());
+        
+        String imageName = image.getOriginalFilename();
+        String filename = "";
+        String thumbnailFilename = "";
+        // Save into DB.
+
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            filename = (String.format("user_%d\\%s%s", id, imageId, imageExtension));
+            thumbnailFilename = (String.format("user_%d\\%s_thumbnail%s", id, imageId, imageExtension));
+        } else {
+            filename = (String.format("user_%d/%s%s", id, imageId, imageExtension));
+            thumbnailFilename = (String.format("user_%d/%s_thumbnail%s", id, imageId, imageExtension));
+        }
+        if (user.getPrimaryImagePath() == null) {
+            user.setPrimaryImage(filename);
+            user.setPrimaryThumbnailPath(thumbnailFilename);
+        }
+        Image newImage = new Image(imageName, imageId, filename, thumbnailFilename);
         user.addUserImage(newImage);
-        user.updatePrimaryImage(id, imageId, imageExtension);
         userRepository.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(String.valueOf(newImage.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.writeValueAsString(newImage));
     }
 
 
@@ -460,10 +474,78 @@ public class UserController {
         }
         if (System.getProperty("os.name").startsWith("Windows")) {
             user.setPrimaryImage(String.format("user_%d\\%s%s", id, imageId, extension));
+            user.setPrimaryThumbnailPath(String.format("user_%d\\%s_thumbnail%s", id, imageId, extension));
         } else {
             user.setPrimaryImage(String.format("user_%d/%s%s", id, imageId, extension));
+            user.setPrimaryThumbnailPath(String.format("user_%d/%s_thumbnail%s", id, imageId, extension));
         }
         userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+  /**
+   * deletes an image
+   *
+   * @param businessId unique identifier of the business that the image is relating to.
+   * @param productId product identifier that the image is relating to.
+   * @param image a multipart image of the file
+   * @return ResponseEntity<String>
+   * @throws IOException
+   */
+  @DeleteMapping("/users/{id}/images/{imageId}")
+  public ResponseEntity<String> deleteProductImage(@PathVariable long id, @PathVariable String imageId, HttpSession session, HttpServletRequest request) throws IOException {
+      User user = userRepository.findUserById(id);
+      if (user == null) {
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+      }
+      User userSession = (User) session.getAttribute(User.USER_SESSION_ATTRIBUTE);
+      if (userSession == null){
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      }
+      if( userSession.getId() != user.getId() && !Role.isGlobalApplicationAdmin(userSession.getRole())){
+          return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+      }
+
+      boolean validImage = false;
+      if (user != null) {
+          for (Image image: user.getImages()) {
+              if (imageId.equals(image.getId())) {
+                  validImage = true;
+                  break;
+              }
+          }
+      }
+      if (user == null || !validImage) {
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+      }
+      String imageExtension = "";
+      String imageDir = rootImageDir + "user_" + id + "/" + imageId;
+      boolean pathExists = false;
+      List<String> extensions = new ArrayList<>();
+      extensions.add(".png");
+      extensions.add(".jpg");
+      extensions.add(".gif");
+      for (String ext: extensions) {
+          Path path = Paths.get(imageDir + ext);
+          if (Files.exists(path)) {
+              pathExists = true;
+              imageExtension = ext;
+              break;
+          }
+      }
+
+        File userDir = new File(rootImageDir + "user_" + id);
+        File checkFile = new File(String.format("%s/%s%s", userDir, imageId, imageExtension));
+        if (pathExists) {
+            user.deleteUserImage(imageId);
+            userRepository.save(user);
+            Files.delete(Paths.get(userDir + "/" + imageId + imageExtension));
+            Files.delete(Paths.get(userDir + "/" + imageId + "_thumbnail" + imageExtension));
+            logger.info(String.format("File %s successfully removed", checkFile.toString()));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Image does not exist.");
+        }
+
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
