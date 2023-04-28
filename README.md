@@ -9,7 +9,7 @@ The idea for this site is to allow businesses to advertise products that are goi
 
 For detailed information about our site and how to use it please refer to our [wiki](https://github.com/nzjchen/refood/wiki), which contains a user manual and our design decisions
 
-You can find our deployed site here: [https://csse-s302g9.canterbury.ac.nz/prod](https://csse-s302g9.canterbury.ac.nz/prod/)
+Our site used to be deployed here: [https://csse-s302g9.canterbury.ac.nz/prod](https://csse-s302g9.canterbury.ac.nz/prod/)
 
 Sample user for demo purposes:
 - Username: jsails0@go.com
